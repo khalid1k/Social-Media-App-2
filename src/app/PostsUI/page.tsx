@@ -3,6 +3,8 @@ import { useState } from "react";
 import { resolve } from "path";
 import React from "react";
 import { useRef } from "react";
+import { useMutation } from "@apollo/client";
+import { CREATE_NEW_POST } from "../graphqlFiles/mutation";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,15 +12,12 @@ function PostUi() {
     interface IFile {
         myFile: string;
     }
-    const [data, setData] = useState([]);
+    // const [data, setData] = useState([]);
     const [postImage, setPostImage] = useState<IFile>({
         myFile: "",
     });
-    // const getData = async () => {
-    //     const result = await fetch("http://localhost:3000/api/PostsApi");
-    //     const res = await result.json();
-    //     setData(res.data);
-    // };
+    const [CreateNewPost,{data,loading,error}]=useMutation(CREATE_NEW_POST);
+    
 
     const title1 = useRef<HTMLInputElement | null>(null);
     const content1 = useRef<HTMLTextAreaElement | null>(null);
@@ -41,35 +40,39 @@ function PostUi() {
         const base64: any = await convertToBase64(file);
         setPostImage({ ...postImage, myFile: base64 });
     };
+    
     const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const userId = "65c5ff972cdb142e726b0662";
         const title = title1.current?.value;
         const content = content1.current?.value;
         const dataObject = { userId, title, content, postImage };
-        const res = await fetch("http://localhost:3000/api/PostsApi", {
-            method: "POST",
-            body: JSON.stringify(dataObject),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        const result = await res.json();
-        if (result._id) {
-            toast.success("Post is Uploaded Successfully!.....");
-        } else {
-            toast.error("an error occur while Uploading");
+        try {
+            await CreateNewPost({
+              variables: { postNew: dataObject },
+            });
+      
+            if (data) {
+              toast.success("Post is Uploaded Successfully!.....");
+            } else {
+              toast.error("An error occurred while Uploading");
+            }
+          } catch (error) {
+            console.error(error);
+            toast.error("An error occurred while Uploading");
+          }
+        };
+      
+        if (loading) {
+          return <h1>Loading....</h1>;
         }
-    };
-    const formReset = () => {
-        if (title1.current) {
-            title1.current.value = "";
+      
+        if (error) {
+          console.log(error);
         }
-        if (content1.current) {
-            content1.current.value = "";
-        }
-    };
+      
+    
+    
     return (
         <div className="Login-main bg-slate-900 grid place-content-center place-items-center md:w-100% lg:w-full md:h-full lg:h-full xl:h-full">
             <ToastContainer />
@@ -77,7 +80,7 @@ function PostUi() {
                 <div className="longImg  w-80 grid place-content-center place-items-center mt-6 mb-4">
                     <img
                         className="w-auto"
-                        src="post.svg"
+                        src="createPost.svg"
                         alt="sigin image"
                     ></img>
                 </div>
@@ -140,12 +143,7 @@ function PostUi() {
                                 >
                                     Add
                                 </button>
-                                <button
-                                    className="bg-orange-500 p-2  px-4 rounded-md hover:opacity-75"
-                                    onClick={formReset}
-                                >
-                                    Reset
-                                </button>
+                                
                             </div>
                         </form>
                     </div>
@@ -154,6 +152,6 @@ function PostUi() {
             <div></div>
         </div>
     );
-}
+    }
 
 export default PostUi;

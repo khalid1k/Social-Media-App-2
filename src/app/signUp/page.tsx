@@ -1,8 +1,10 @@
 "use client";
+import { useMutation } from "@apollo/client";
 import React from "react";
 import { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CREATE_NEW_USER } from "../graphqlFiles/mutation";
 
 function Sigin() {
     const name1 = useRef<HTMLInputElement | null>(null);
@@ -10,51 +12,40 @@ function Sigin() {
     const email1 = useRef<HTMLInputElement | null>(null);
     const password1 = useRef<HTMLInputElement | null>(null);
     const [gender, setGender] = useState<string>("");
+    const [createNewUser,{data,loading,error}]=useMutation(CREATE_NEW_USER);
+    if(loading){
+        return <h1>Loading....</h1>
+    }
+    if(error){
+        console.log(error);
+    }
     const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const name = name1.current?.value;
         const email = email1.current?.value;
         const password = password1.current?.value;
 
-        const age = age1.current?.value;
+        const age2 = age1.current?.value;
+          const age=Number(age2);
         const dataObject = { name, email, password, age, gender };
-
-        const res = await fetch("http://localhost:3000/api/SocialMedia", {
-            method: "POST",
-            body: JSON.stringify(dataObject),
-            headers: {
-                "Content-Type": "application/json",
-            },
+        await createNewUser({
+            variables:{userNew:dataObject}
         });
+        
 
-        const result = await res.json();
-
-        if (result) {
-            console.log(result._id);
+        if (data) {
+            
             toast.success("Signin Successfully!....", {
                 position: "top-center",
             });
-            formReset();
+            
         } else {
-            toast.error("Signin Successfully!....", {
+            toast.error("Error!....while signUp", {
                 position: "top-center",
             });
         }
     };
-    const formReset = () => {
-        if (name1.current) {
-            name1.current.value = "";
-        }
-        if (age1.current) {
-            age1.current.value = "";
-        }
-        if (email1.current) {
-            email1.current.value = "";
-        }
-        if (password1.current) {
-            password1.current.value = "";
-        }
-    };
+    
     return (
         <div className="Login-main bg-slate-900 grid place-content-center place-items-center md:w-100% lg:w-full md:h-full lg:h-full xl:h-full">
             <ToastContainer />
@@ -62,12 +53,12 @@ function Sigin() {
                 <div className="longImg  w-80 grid place-content-center place-items-center mt-6 mb-4">
                     <img
                         className="w-auto"
-                        src="signin.svg"
+                        src="signUp.svg"
                         alt="sigin image"
                     ></img>
                 </div>
 
-                <div className="todoForm   space-y-4 bg-gray-800 p-5 shadow  shadow-slate-300/80  rounded   mt-5 mb-11  md:w-96 ">
+                <div className="todoForm   space-y-4 bg-gray-600 p-5 shadow  shadow-slate-300/80  rounded   mt-5 mb-11  md:w-96 ">
                     <h1 className="text-lg font-bold text-center">
                         SignUp Here
                     </h1>
@@ -169,14 +160,10 @@ function Sigin() {
                                 >
                                     Add
                                 </button>
-                                <button
-                                    className="bg-orange-500 p-2  px-4 rounded-md hover:opacity-75"
-                                    onClick={formReset}
-                                >
-                                    Reset
-                                </button>
+                                
                             </div>
                         </form>
+                        
                     </div>
                 </div>
             </div>

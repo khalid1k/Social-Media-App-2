@@ -5,6 +5,7 @@ export const typeDefs = gql`
         getUsers: [User!]!
         getPosts: [Posts!]
         getComments: [Comment!]
+        comment(id:ID!):Comment
     }
 
     type User {
@@ -25,6 +26,16 @@ export const typeDefs = gql`
         gender: String!
         password: String!
     }
+    input NewPostInput {
+        title:String!
+        content:String!
+        postImage:PostImageInput!
+        userId:ID!
+
+    }
+    input PostImageInput {
+        myFile: String!
+      }
 
     type Posts {
         _id: ID!
@@ -32,15 +43,27 @@ export const typeDefs = gql`
         content: String!
         postImage: String!
         userId: ID!
+        createdAt:Date
+        updatedAt:Date
+    }
+    input NewCommentInput {
+        userId:ID!
+        postId:ID!
+        comment:String!
     }
 
     type Comment {
         _id: ID!
         userId: ID!
         postId: ID!
-        commment: ID!
+        comment: String!
         createdAt: Date
         updatedAt: Date
+    }
+    type Mutation{
+        signUp(userNew:NewUserInput!):User
+        createNewPost(postNew:NewPostInput!):Posts
+        createNewComment(commentNew:NewCommentInput!):Comment
     }
 `;
 
