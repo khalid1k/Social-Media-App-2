@@ -15,7 +15,7 @@ const CommentList = ({ postId }: Props) => {
       return <h1>Loading......</h1>;
     }
     if (error) {
-      console.log(error);
+      return `Error! ${error}`;
     }
   
     

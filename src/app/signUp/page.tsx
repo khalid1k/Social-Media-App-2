@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CREATE_NEW_USER } from "../graphqlFiles/mutation";
+import Loader from "../components/Loader";
 
 function Sigin() {
     const name1 = useRef<HTMLInputElement | null>(null);
@@ -14,11 +15,12 @@ function Sigin() {
     const [gender, setGender] = useState<string>("");
     const [createNewUser,{data,loading,error}]=useMutation(CREATE_NEW_USER);
     if(loading){
-        return <h1>Loading....</h1>
+        return <Loader/>;
     }
     if(error){
-        console.log(error);
+        return `Error! ${error}`;
     }
+    
     const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const name = name1.current?.value;
@@ -28,28 +30,29 @@ function Sigin() {
         const age2 = age1.current?.value;
           const age=Number(age2);
         const dataObject = { name, email, password, age, gender };
-        await createNewUser({
+       const result= await createNewUser({
             variables:{userNew:dataObject}
         });
         
-
-        if (data) {
-            
-            toast.success("Signin Successfully!....", {
-                position: "top-center",
-            });
+        
+        
+      
+       
+        if (result.data.signUp._id) {
+            alert("Signin Successfully!....")
+            toast.success("Successfully Sigin")
             
         } else {
-            toast.error("Error!....while signUp", {
-                position: "top-center",
-            });
+            toast.error("Error!....while signUp");
+            alert("Error!")
         }
     };
     
     return (
         <div className="Login-main bg-slate-900 grid place-content-center place-items-center md:w-100% lg:w-full md:h-full lg:h-full xl:h-full">
-            <ToastContainer />
+            <ToastContainer/>
             <div className="loginContent grid place-content-center place-items-center ">
+            
                 <div className="longImg  w-80 grid place-content-center place-items-center mt-6 mb-4">
                     <img
                         className="w-auto"
@@ -75,8 +78,9 @@ function Sigin() {
                                     className="text-gray-500 text-sm font-bold p-2 rounded-md shadow-xl"
                                     type="text"
                                     id="name"
-                                    placeholder="Enter Task Name"
+                                    placeholder="Enter User Name"
                                     ref={name1}
+                                    required
                                 />
                             </div>
                             <div className="flex flex-col">
@@ -105,6 +109,7 @@ function Sigin() {
                                     type="email"
                                     id="email"
                                     ref={email1}
+                                    required
                                 />
                             </div>
                             <div className="flex flex-col">
@@ -119,6 +124,7 @@ function Sigin() {
                                     type="password"
                                     id="Password"
                                     ref={password1}
+                                    required
                                 />
                             </div>
                             <div className="flex flex-col ">
@@ -167,6 +173,8 @@ function Sigin() {
                     </div>
                 </div>
             </div>
+
+          
         </div>
     );
 }

@@ -11,7 +11,7 @@ const NavMenu = () => {
                 </li>
                 <li>
                     <Link href={"/signUp"} className="hover:text-slate-300">
-                        sigIn
+                        Sigin
                     </Link>
                 </li>
 

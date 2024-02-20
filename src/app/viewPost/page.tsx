@@ -3,15 +3,16 @@ import { GetPostsQuery } from "../graphqlFiles/Queries/Queries";
 import { useQuery } from "@apollo/client";
 import AddCommentBox from "../components/AddComment";
 import CommentList from "../components/CommentList";
+import Loader from "../components/Loader";
 
 function ViewPost() {
    
    const { data, loading, error } = useQuery(GetPostsQuery);
    if(loading){
-    return <h1>Loading......</h1>
+    return <Loader/>;
    }
    if(error){
-    console.log(error);
+    return `Error! ${error}`;
    }
     return (
         <div className="viewPost-main">

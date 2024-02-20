@@ -8,6 +8,7 @@ import { CREATE_NEW_POST } from "../graphqlFiles/mutation";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader";
 function PostUi() {
     interface IFile {
         myFile: string;
@@ -48,11 +49,12 @@ function PostUi() {
         const content = content1.current?.value;
         const dataObject = { userId, title, content, postImage };
         try {
-            await CreateNewPost({
+          const result=  await CreateNewPost({
               variables: { postNew: dataObject },
             });
-      
-            if (data) {
+                
+            if (result.data.createNewPost._id) {
+                alert("Post is Uploaded Successfully!.....")
               toast.success("Post is Uploaded Successfully!.....");
             } else {
               toast.error("An error occurred while Uploading");
@@ -64,18 +66,18 @@ function PostUi() {
         };
       
         if (loading) {
-          return <h1>Loading....</h1>;
+          return <Loader/>;
         }
       
         if (error) {
-          console.log(error);
+            return `Error! ${error}`;
         }
       
     
     
     return (
         <div className="Login-main bg-slate-900 grid place-content-center place-items-center md:w-100% lg:w-full md:h-full lg:h-full xl:h-full">
-            <ToastContainer />
+            <ToastContainer/>
             <div className="loginContent grid place-content-center place-items-center ">
                 <div className="longImg  w-80 grid place-content-center place-items-center mt-6 mb-4">
                     <img
@@ -102,8 +104,9 @@ function PostUi() {
                                     className="text-gray-500 text-sm font-bold p-2 rounded-md shadow-xl"
                                     type="text"
                                     id="name"
-                                    placeholder="Enter Task Name"
+                                    placeholder="Enter The Post Title"
                                     ref={title1}
+                                    required
                                 />
                             </div>
 
@@ -133,6 +136,7 @@ function PostUi() {
                                     id="file"
                                     accept=".jpeg, .png, .jpg"
                                     onChange={(e) => handleFileUpload(e)}
+                                    required
                                 />
                             </div>
 

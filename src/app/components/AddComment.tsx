@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_NEW_COMMENT } from "../graphqlFiles/mutation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 type Props={
     postId:String
 }
@@ -13,7 +16,7 @@ const AddCommentBox=({postId}:Props)=>{
         const comment=commentContent.current?.value;
         const userId="65c5ff972cdb142e726b0662";
         const dataObject={postId, comment, userId};
-        await createNewComment({
+      const result=  await createNewComment({
             variables:{commentNew:dataObject}
         })
         if(commentContent.current){
@@ -27,10 +30,12 @@ const AddCommentBox=({postId}:Props)=>{
             console.log(error);
             alert("an Error is occured!");
         }
-        if(data){
+        if(result.data.createNewComment._id){
             alert("successfully comment is added!");
-        }
-        
+            
+        }else{
+            alert("Error!")
+        }       
           
           
 
@@ -38,6 +43,7 @@ const AddCommentBox=({postId}:Props)=>{
     return(
         
         <div className="getComment bg-slate-50 text-slate-500 text-md font-semibold rounded-md p-3">
+            <ToastContainer/>
         <div className="space-y-2">
             <label htmlFor="commentBox">
                 Write Comment
