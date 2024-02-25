@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import AddCommentBox from "../components/AddComment";
 import CommentList from "../components/CommentList";
 import Loader from "../components/Loader";
-
+import LastSeen from "../components/lastSeen";
 function ViewPost() {
    
    const { data, loading, error } = useQuery(GetPostsQuery);
@@ -50,7 +50,8 @@ function ViewPost() {
                                     Created Date:
                                 </span>
                                 <span className="dark:text-slate-500 text-md space-x-2 font-semibold">
-                                    {item.createdAt}
+                                    {/* {item.createdAt} */}
+                                    {<LastSeen date={item.createdAt}/>}
                                 </span>
                             </div>
                            <AddCommentBox key={item._id} postId={item._id}/>

@@ -1,7 +1,7 @@
 import { GETCOMMETNS } from "../graphqlFiles/Queries/Queries";
 import { useQuery } from "@apollo/client";
 import {  useState } from "react";
-
+import LastSeen from "./lastSeen";
 type Props={
     postId:String
 }
@@ -64,7 +64,7 @@ const CommentList = ({ postId }: Props) => {
                 Created Date:
               </span>
               <span className="dark:text-slate-500 text-md space-x-2 font-semibold">
-              {formattedDate(item.createdAt)}
+              {<LastSeen date={item.createdAt}/>}
               </span>
             </div>
           ))
